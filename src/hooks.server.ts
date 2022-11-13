@@ -1,1 +1,1 @@
-import '$lib/server/db';
+import '$lib/db';
