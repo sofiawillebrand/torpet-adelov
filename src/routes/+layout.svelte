@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { supabaseClient } from '$lib/supabaseClient';
+	import { supabaseClient } from '$lib/db';
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import './styles.css';
+	import '../input.css';
 
 	onMount(() => {
 		const {
