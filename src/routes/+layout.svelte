@@ -18,7 +18,7 @@
 	});
 </script>
 
-<div>
+<main class="mx-auto w-2/4">
 	<Header />
 	<slot />
-</div>
+</main>
