@@ -104,9 +104,9 @@
 {/if}
 
 <button
-	class="text-white text-xl uppercase float-left h-16 w-8 text-center"
-	on:click={() => (showModal = true)}
-/>
+	class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded mb-6"
+	on:click={() => (showModal = true)}>Lägg till en bokning</button
+>
 
 <section class=" px-3 py-1 w-full bg-sky-900 text-center rounded-t">
 	<div class="m-0 p-0 h-16">
