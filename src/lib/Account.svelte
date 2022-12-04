@@ -48,8 +48,7 @@
 
 			const updates = {
 				id: user.id,
-				username,
-				website,
+				username: username,
 				avatar_url: avatarUrl,
 				updated_at: new Date()
 			};

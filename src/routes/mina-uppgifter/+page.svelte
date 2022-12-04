@@ -1,16 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Auth from '$lib/Auth.svelte';
-	import Info from '$lib/Info.svelte';
+	import Account from '$lib/Account.svelte';
 </script>
 
 <svelte:head>
-	<title>Supabase + SvelteKit</title>
+	<title>Torpet - Mina uppgifter</title>
 	<meta name="description" content="SvelteKit using supabase-js v2" />
 </svelte:head>
 
-{#if !$page.data.session}
-	<Auth />
-{:else}
-	<Info />
+{#if $page.data.session}
+	<Account session={$page.data.session} />
 {/if}

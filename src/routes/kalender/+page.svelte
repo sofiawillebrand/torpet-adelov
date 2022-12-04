@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Torpet Kalender</title>
+	<title>Torpet - Kalender</title>
 	<meta name="description" content="SvelteKit using supabase-js v2" />
 </svelte:head>
 

@@ -19,9 +19,9 @@
 	<div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
 		<div class="text-sm lg:flex-grow">
 			<a
-				href="/info"
+				href="/"
 				class="block mt-4 lg:inline-block lg:mt-0 hover:text-white mr-4 
-				{onRoute === '/info' ? 'font-bold text-white' : 'text-teal-200'}"
+				{onRoute === '/' ? 'font-bold text-white' : 'text-teal-200'}"
 			>
 				Info
 			</a>
@@ -33,11 +33,11 @@
 				Kalender
 			</a>
 			<a
-				href="#responsive-header"
-				class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white
-				{onRoute === '/responsive header' ? 'font-bold' : ''}"
+				href="/mina-uppgifter"
+				class="block mt-4 lg:inline-block lg:mt-0  hover:text-white
+				{onRoute === '/mina-uppgifter' ? 'font-bold text-white' : 'text-teal-200'}"
 			>
-				Dina uppgifter
+				Mina uppgifter
 			</a>
 		</div>
 	</div>

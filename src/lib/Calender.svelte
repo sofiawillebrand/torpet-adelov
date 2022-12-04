@@ -24,7 +24,7 @@
 	];
 	let monthIndex: number = date.getMonth();
 	let year: number = date.getFullYear();
-	let showModal = true;
+	let showModal = false;
 
 	$: month = monthNames[monthIndex];
 	$: firstDayIndex = new Date(year, monthIndex, 1).getDay();
