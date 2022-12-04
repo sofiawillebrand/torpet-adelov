@@ -1,6 +1,11 @@
 <script lang="ts">
 	const date = new Date();
-	const monthNames = [
+	const today = {
+		dayNumber: date.getDate(),
+		month: date.getMonth(),
+		year: date.getFullYear()
+	};
+	const monthNames: string[] = [
 		'Januari',
 		'Februari',
 		'Mars',
@@ -15,7 +20,26 @@
 		'December'
 	];
 	let monthIndex: number = date.getMonth();
+	let year: number = date.getFullYear();
+
 	$: month = monthNames[monthIndex];
+	$: firstDayIndex = new Date(year, monthIndex, 1).getDay();
+	$: numberOfDays = new Date(year, monthIndex + 1, 0).getDate();
+	$: numberOfDaysPreviousMonth = new Date(year, monthIndex, 0).getDate();
+	$: calendarCellsQty = firstDayIndex <= 4 ? 35 : 42;
+
+	const updateMonth = (step: number) => {
+		monthIndex = monthIndex + step;
+
+		if (monthIndex > 11) {
+			monthIndex = 0;
+			year = year + 1;
+		} else if (monthIndex < 0) {
+			monthIndex = 0;
+			year = year - 1;
+		}
+		console.log('first day', firstDayIndex);
+	};
 </script>
 
 <svelte:head>
@@ -25,35 +49,46 @@
 
 <section class=" px-20 py-6 w-full bg-sky-900 text-center">
 	<div class="m-0 p-0">
-		<button class="text-white text-xl uppercase float-left pt-3">&#10094;</button>
-		<button class="text-white text-xl uppercase float-right pt-3">&#10095;</button>
-		<p class="text-white">Augusti<br /><span style="font-size:18px">2021</span></p>
+		<button class="text-white text-xl uppercase float-left pt-3" on:click={() => updateMonth(-1)}
+			>&#10094;</button
+		>
+		<button class="text-white text-xl uppercase float-right pt-3" on:click={() => updateMonth(1)}
+			>&#10095;</button
+		>
+		<p class="text-white">{month}<br /><span style="font-size:18px">{year}</span></p>
 	</div>
 </section>
 
-<section class="m-0 px-3 py-0 bg-gray-500">
-	<div class="inline-block w-1/7 text-gray-900 text-center">Mån</div>
-	<div class="inline-block w-1/7 text-gray-900 text-center">Tis</div>
-	<div class="inline-block w-1/7 text-gray-900 text-center">Ons</div>
-	<div class="inline-block w-1/7 text-gray-900 text-center">Tors</div>
-	<div class="inline-block w-1/7 text-gray-900 text-center">Fre</div>
-	<div class="inline-block w-1/7 text-gray-900 text-center">Lör</div>
-	<div class="inline-block w-1/7 text-gray-900 text-center">Sön</div>
+<section class="m-0 bg-gray-500 w-full grid grid-cols-7">
+	<div class="text-center mb-1 text-xs p-1">Må</div>
+	<div class="text-center mb-1 text-xs p-1">Ti</div>
+	<div class="text-center mb-1 text-xs p-1">On</div>
+	<div class="text-center mb-1 text-xs p-1">To</div>
+	<div class="text-center mb-1 text-xs p-1">Fr</div>
+	<div class="text-center mb-1 text-xs p-1">Lö</div>
+	<div class="text-center mb-1 text-xs p-1">Sö</div>
 </section>
 
-<section class="m-0 px-3 py-0 bg-gray-400">
-	<div class="list-none inline-block w-1/7 text-center mb-1 text-xs">1</div>
-	<div class="list-none inline-block w-1/7 text-center mb-1 text-xs">2</div>
-	<div class="list-none inline-block w-1/7 text-center mb-1 text-xs">3</div>
-	<div class="list-none inline-block w-1/7 text-center mb-1 text-xs">4</div>
-	<div class="list-none inline-block w-1/7 text-center mb-1 text-xs">5</div>
-	<div class="list-none inline-block w-1/7 text-center mb-1 text-xs">6</div>
-	<div class="list-none inline-block w-1/7 text-center mb-1 text-xs">7</div>
-	<div class="list-none inline-block w-1/7 text-center mb-1 text-xs">8</div>
-	<div class="list-none inline-block w-1/7 text-center mb-1 text-xs">9</div>
-	<div class="list-none inline-block w-1/7 text-center mb-1 text-xs">
-		<span class="active">10</span>
-	</div>
-	<div class="list-none inline-block w-1/7 text-center mb-1 text-xs">11</div>
-	...etc
+<section class="m-0 bg-gray-400 w-full grid grid-cols-7">
+	{#each Array(calendarCellsQty) as _, i}
+		{#if i < firstDayIndex}
+			<div class="text-center text-xs p-1 border-gray-500 border text-gray-500">
+				{i - firstDayIndex + numberOfDaysPreviousMonth + 1}
+			</div>
+		{:else if i >= numberOfDays + firstDayIndex}
+			<div class="text-center text-xs p-1 border-gray-500 border text-gray-500">
+				{i - firstDayIndex - numberOfDays + 1}
+			</div>
+		{:else}
+			<div
+				class:font-extrabold={i === today.dayNumber + (firstDayIndex - 1) &&
+					monthIndex === today.month &&
+					year === today.year}
+				class="text-center text-xs p-1 border-sky-900 border"
+				data-dateID={`${month}_${i - firstDayIndex + 1}_${year}`}
+			>
+				{i - firstDayIndex + 1}
+			</div>
+		{/if}
+	{/each}
 </section>
