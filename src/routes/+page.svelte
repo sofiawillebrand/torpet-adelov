@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/stores';
 	import Account from '$lib/Account.svelte';
 	import Auth from '$lib/Auth.svelte';
