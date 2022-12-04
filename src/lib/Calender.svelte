@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Modal from './Modal.svelte';
+	import { bookingStore } from '../booking-store';
 
 	const date = new Date();
 	const today = {
@@ -23,7 +24,7 @@
 	];
 	let monthIndex: number = date.getMonth();
 	let year: number = date.getFullYear();
-	let showModal = false;
+	let showModal = true;
 
 	$: month = monthNames[monthIndex];
 	$: firstDayIndex = new Date(year, monthIndex, 1).getDay();
@@ -46,8 +47,59 @@
 
 {#if showModal}
 	<Modal title={'Boka vistelse'} on:close={() => (showModal = false)}>
-		<p slot="content">hej hej</p>
-		<p slot="footer">hej hej</p>
+		<form slot="content" class="bg-white">
+			<p class=" text-gray-700 text-sm  mb-4">
+				Observera att din email och ditt namn kommer att synas vid de datum du bokar för andra som
+				har tillgång till kalendern.
+			</p>
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="startdate">
+					Startdatum
+				</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="startdate"
+					type="date"
+					bind:value={$bookingStore.startdate}
+				/>
+			</div>
+			<div class="mb-6">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="enddate"> Slutdatum </label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="enddate"
+					type="date"
+					bind:value={$bookingStore.enddate}
+				/>
+			</div>
+			<div class="mb-6">
+				<p class="block text-gray-700 text-sm font-bold mb-2">
+					Vill du tillåta andra att boka samma datum:
+				</p>
+				<input
+					id="allow-other"
+					type="radio"
+					name="allow"
+					value={0}
+					bind:group={$bookingStore.type}
+				/>
+				<label class=" text-gray-700 text-sm mb-2" for="allow-other"> Ja </label>
+				<input
+					id="dont-allow-other"
+					type="radio"
+					name="allow"
+					value={1}
+					bind:group={$bookingStore.type}
+				/>
+				<label class=" text-gray-700 text-sm mb-2" for="dont-allow-other"> Nej </label>
+			</div>
+		</form>
+		<button
+			slot="footer"
+			class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded"
+		>
+			Skicka
+		</button>
 	</Modal>
 {/if}
 
@@ -56,7 +108,7 @@
 	on:click={() => (showModal = true)}
 />
 
-<section class=" px-3 py-1 w-full bg-sky-900 text-center">
+<section class=" px-3 py-1 w-full bg-sky-900 text-center rounded-t">
 	<div class="m-0 p-0 h-16">
 		<button
 			class="text-white text-xl uppercase float-left h-16 w-8 text-center"
@@ -73,23 +125,23 @@
 </section>
 
 <section class="m-0 bg-gray-500 w-full grid grid-cols-7">
-	<div class="text-center mb-1 text-xs p-1">Må</div>
-	<div class="text-center mb-1 text-xs p-1">Ti</div>
-	<div class="text-center mb-1 text-xs p-1">On</div>
-	<div class="text-center mb-1 text-xs p-1">To</div>
-	<div class="text-center mb-1 text-xs p-1">Fr</div>
-	<div class="text-center mb-1 text-xs p-1">Lö</div>
-	<div class="text-center mb-1 text-xs p-1">Sö</div>
+	<div class="text-center mb-1 text-sm p-1">Må</div>
+	<div class="text-center mb-1 text-sm p-1">Ti</div>
+	<div class="text-center mb-1 text-sm p-1">On</div>
+	<div class="text-center mb-1 text-sm p-1">To</div>
+	<div class="text-center mb-1 text-sm p-1">Fr</div>
+	<div class="text-center mb-1 text-sm p-1">Lö</div>
+	<div class="text-center mb-1 text-sm p-1">Sö</div>
 </section>
 
 <section class="m-0 bg-gray-400 w-full grid grid-cols-7">
 	{#each Array(calendarCellsQty) as _, i}
 		{#if i < firstDayIndex}
-			<div class="text-center text-xs p-1 border-gray-500 border text-gray-500">
+			<div class="text-center text-sm p-1 border-gray-500 border text-gray-500">
 				{i - firstDayIndex + numberOfDaysPreviousMonth + 1}
 			</div>
 		{:else if i >= numberOfDays + firstDayIndex}
-			<div class="text-center text-xs p-1 border-gray-500 border text-gray-500">
+			<div class="text-center text-sm p-1 border-gray-500 border text-gray-500">
 				{i - firstDayIndex - numberOfDays + 1}
 			</div>
 		{:else}
@@ -97,7 +149,7 @@
 				class:font-extrabold={i === today.dayNumber + (firstDayIndex - 1) &&
 					monthIndex === today.month &&
 					year === today.year}
-				class="text-center text-xs p-1 border-sky-900 border"
+				class="text-center text-sm p-1 border-sky-900 border"
 				data-dateID={`${month}_${i - firstDayIndex + 1}_${year}`}
 			>
 				{i - firstDayIndex + 1}
