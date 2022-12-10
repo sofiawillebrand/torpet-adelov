@@ -18,7 +18,10 @@
 	});
 </script>
 
-<main class="mx-auto w-2/4">
+<!-- TODO: Add page for pictures -->
+<!-- TODO: Add page for being able to give tips about things to do in the area -->
+
+<main class="mx-auto md:w-2/4">
 	<Header />
 	<slot />
 </main>

@@ -45,6 +45,11 @@
 	};
 </script>
 
+<!-- TODO: Click on calender and open booking on that day -->
+<!-- TODO: Display other bookings on page if dates overlap with other -->
+<!-- TODO: Possibility to add comment to booking -->
+<!-- TODO: Section for overlooking a booking -->
+
 {#if showModal}
 	<Modal title={'Boka vistelse'} on:close={() => (showModal = false)}>
 		<form slot="content" class="bg-white">
