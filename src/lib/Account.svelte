@@ -7,8 +7,6 @@
 
 	let loading = false;
 	let username: string | null = null;
-	let website: string | null = null;
-	let avatarUrl: string | null = null;
 
 	onMount(() => {
 		getProfile();
@@ -21,14 +19,12 @@
 
 			const { data, error, status } = await supabaseClient
 				.from('profiles')
-				.select(`username, website, avatar_url`)
+				.select(`username`)
 				.eq('id', user.id)
 				.single();
 
 			if (data) {
 				username = data.username;
-				website = data.website;
-				avatarUrl = data.avatar_url;
 			}
 
 			if (error && status !== 406) throw error;
@@ -49,7 +45,6 @@
 			const updates = {
 				id: user.id,
 				username: username,
-				avatar_url: avatarUrl,
 				updated_at: new Date()
 			};
 
@@ -80,30 +75,38 @@
 	}
 </script>
 
-<form class="form-widget" on:submit|preventDefault={updateProfile}>
-	<div>
-		<label for="email">Email</label>
-		<input id="email" type="text" value={session.user.email} disabled />
-	</div>
-	<div>
-		<label for="username">Name</label>
-		<input id="username" type="text" bind:value={username} />
-	</div>
-	<div>
-		<label for="website">Website</label>
-		<input id="website" type="website" bind:value={website} />
-	</div>
-
-	<div>
+<form class=" px-8 pt-6 pb-8 mb-4 bg-white" on:submit|preventDefault={updateProfile}>
+	<div class="mb-4">
+		<label for="email">E-mail</label>
 		<input
-			type="submit"
-			class="button block primary"
-			value={loading ? 'Loading...' : 'Update'}
-			disabled={loading}
+			id="email"
+			type="text"
+			value={session.user.email}
+			class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+			disabled
+		/>
+	</div>
+	<div class="mb-4">
+		<label for="username">Namn</label>
+		<input
+			id="username"
+			type="text"
+			bind:value={username}
+			class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 		/>
 	</div>
 
-	<div>
-		<button class="button block" on:click={signOut} disabled={loading}>Sign Out</button>
+	<div class="mb-4">
+		<input
+			type="submit"
+			class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded"
+			value={loading ? 'Loading...' : 'Uppdatera'}
+			disabled={loading}
+		/>
+		<button
+			class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded"
+			on:click={signOut}
+			disabled={loading}>Logga ut</button
+		>
 	</div>
 </form>
