@@ -76,7 +76,7 @@
 	</div>
 </section>
 
-<section class="m-0 bg-gray-500 w-full grid grid-cols-7">
+<section class="m-0 bg-gray-300 w-full grid grid-cols-7">
 	<div class="text-center mb-1 text-sm p-1">Må</div>
 	<div class="text-center mb-1 text-sm p-1">Ti</div>
 	<div class="text-center mb-1 text-sm p-1">On</div>
@@ -86,7 +86,7 @@
 	<div class="text-center mb-1 text-sm p-1">Sö</div>
 </section>
 
-<section class="m-0 bg-gray-400 w-full grid grid-cols-7">
+<section class="m-0 bg-white w-full grid grid-cols-7">
 	{#each Array(calendarCellsQty) as _, i}
 		{#if i < firstDayIndex}
 			<div class="text-center text-sm p-1 border-gray-500 border text-gray-500">
