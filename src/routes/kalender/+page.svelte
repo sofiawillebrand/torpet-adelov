@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Calender from '$lib/Calender.svelte';
+	import Calender from '$lib/Calender/Calender.svelte';
 </script>
 
 <svelte:head>
