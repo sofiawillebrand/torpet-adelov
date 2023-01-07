@@ -1,12 +1,43 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import type { AuthSession } from '@supabase/supabase-js';
 	import { supabaseClient } from '$lib/db';
 	import Modal from '$lib/Modal.svelte';
 	import { bookingStore } from '../../booking-store';
+	import { page } from '$app/stores';
 
-	let username: string | null = null;
 	export let showModal = false;
+	let username: string | null = null;
+	let loading = false;
+	let session: AuthSession;
+
+	if ($page.data.session) {
+		session = $page.data.session;
+	}
+
+	const bookVisit = async () => {
+		try {
+			loading = true;
+			const { user } = session;
+
+			const booking = {
+				userid: user.id,
+				from_date: $bookingStore.startdate,
+				to_date: $bookingStore.enddate,
+				type: $bookingStore.type
+			};
+
+			const { error } = await supabaseClient.from('bokningar').insert(booking);
+
+			if (error) throw error;
+			showModal = false;
+		} catch (error) {
+			if (error instanceof Error) {
+				alert(error.message);
+			}
+		} finally {
+			loading = false;
+		}
+	};
 </script>
 
 <Modal title={'Boka vistelse'} on:close={() => (showModal = false)}>
@@ -52,6 +83,7 @@
 	<button
 		slot="footer"
 		class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded"
+		on:click={bookVisit}
 	>
 		Skicka
 	</button>
