@@ -114,7 +114,7 @@
 >
 
 <section class=" px-3 py-1 w-full bg-sky-900 text-center rounded-t">
-	<div class="m-0 p-0 h-16">
+	<div class="h-16">
 		<button
 			class="text-white text-xl uppercase float-left h-16 w-8 text-center"
 			on:click={() => updateMonth(-1)}
@@ -125,7 +125,7 @@
 			on:click={() => updateMonth(1)}
 			>&#10095;
 		</button>
-		<p class="text-white">{month}<br /><span>{year}</span></p>
+		<p class="text-white my-auto">{month}<br /><span>{year}</span></p>
 	</div>
 </section>
 
@@ -154,7 +154,7 @@
 				class:font-extrabold={i === today.dayNumber + (firstDayIndex - 1) &&
 					monthIndex === today.month &&
 					year === today.year}
-				class="text-center text-sm p-1 border-sky-900 border"
+				class="text-center text-md p-1 border-sky-900 border"
 				data-dateID={`${month}_${i - firstDayIndex + 1}_${year}`}
 			>
 				{i - firstDayIndex + 1}
