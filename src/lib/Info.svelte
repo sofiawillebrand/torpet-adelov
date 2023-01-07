@@ -2,7 +2,7 @@
 </script>
 
 <svelte:head>
-	<title>Supabase + SvelteKit</title>
+	<title>Info</title>
 	<meta name="description" content="SvelteKit using supabase-js v2" />
 </svelte:head>
 
@@ -10,4 +10,4 @@
 <!-- - Bokningsinformation -->
 <!-- - Generell info om torpet som tex stänga och starta, dasset -->
 
-<div>Det här Torpets hemsida</div>
+<div class=" px-8 pt-6 pb-8 mb-4 bg-white">Det här Torpets hemsida</div>

@@ -20,20 +20,25 @@
 	};
 </script>
 
-<form class="row flex-center flex" on:submit|preventDefault={handleLogin}>
-	<div class="col-6 form-widget">
-		<h1 class="header">Supabase + SvelteKit</h1>
-		<p class="description">Sign in via magic link with your email below</p>
-		<div>
-			<input class="inputField" type="email" placeholder="Your email" bind:value={email} />
-		</div>
-		<div>
-			<input
-				type="submit"
-				class="button block"
-				value={loading ? 'Loading' : 'Send magic link'}
-				disabled={loading}
-			/>
-		</div>
+<form class=" px-8 pt-6 pb-8 mb-4" on:submit|preventDefault={handleLogin}>
+	<p class="mb-4">
+		Logga in genom att ange din mail nedan. Du kommer sedan att få ett mail till den adress du
+		skrivit in, det mailet kommer att innehålla en "magic link" som du ska klicka på. När du klickat
+		på länken kommer du att loggas in.
+	</p>
+	<div class="mb-4">
+		<input
+			type="email"
+			placeholder="E-mail"
+			bind:value={email}
+			class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+		/>
+	</div>
+	<div class="mb-4">
+		<button
+			class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded mb-6"
+			value={loading ? 'Loading' : 'Send magic link'}
+			disabled={loading}>Logga in</button
+		>
 	</div>
 </form>

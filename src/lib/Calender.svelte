@@ -101,7 +101,7 @@
 		</form>
 		<button
 			slot="footer"
-			class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded"
+			class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded"
 		>
 			Skicka
 		</button>
@@ -109,7 +109,7 @@
 {/if}
 
 <button
-	class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded mb-6"
+	class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded mb-6"
 	on:click={() => (showModal = true)}>Lägg till en bokning</button
 >
 
