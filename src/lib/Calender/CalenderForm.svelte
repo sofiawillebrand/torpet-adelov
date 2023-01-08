@@ -6,7 +6,6 @@
 	import { page } from '$app/stores';
 
 	export let showModal = false;
-	let username: string | null = null;
 	let loading = false;
 	let session: AuthSession;
 

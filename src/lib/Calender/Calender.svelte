@@ -1,7 +1,16 @@
 <script lang="ts">
-	import Modal from '../Modal.svelte';
-	import { bookingStore } from '../../booking-store';
 	import CalenderForm from './CalenderForm.svelte';
+	import type { AuthSession } from '@supabase/supabase-js';
+	import { supabaseClient } from '$lib/db';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+
+	let loading = false;
+	let session: AuthSession;
+
+	if ($page.data.session) {
+		session = $page.data.session;
+	}
 
 	const date = new Date();
 	const today = {
@@ -44,6 +53,33 @@
 			year = year - 1;
 		}
 	};
+
+	let bookingsInCurrentMonth: unknown[];
+	onMount(async () => {
+		try {
+			loading = true;
+			const { data, error, status } = await supabaseClient.from('bokningar').select('*');
+
+			if (data) {
+				bookingsInCurrentMonth = data.filter((d) => {
+					const fromMonth = parseInt(d.from_date.split('-')[1]);
+					const toMonth = parseInt(d.to_date.split('-')[1]);
+
+					if (fromMonth === monthIndex + 1 || toMonth === monthIndex + 1) return true;
+				});
+			}
+
+			console.log(bookingsInCurrentMonth);
+
+			if (error && status !== 406) throw error;
+		} catch (error) {
+			if (error instanceof Error) {
+				alert(error.message);
+			}
+		} finally {
+			loading = false;
+		}
+	});
 </script>
 
 <!-- TODO: Click on calender and open booking on that day -->
