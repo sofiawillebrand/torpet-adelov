@@ -4,6 +4,7 @@
 	import { supabaseClient } from '$lib/db';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import type { BookingDto, ContentOfDate } from './Calender';
 
 	let loading = false;
 	let session: AuthSession;
@@ -35,6 +36,7 @@
 	let monthIndex: number = date.getMonth();
 	let year: number = date.getFullYear();
 	let showModal = false;
+	let displayedDays: ContentOfDate[] = [];
 
 	$: month = monthNames[monthIndex];
 	$: firstDayIndex = new Date(year, monthIndex, 1).getDay();
@@ -43,6 +45,7 @@
 	$: calendarCellsQty = firstDayIndex <= 4 ? 35 : 42;
 
 	const updateMonth = (step: number) => {
+		fetchAndPrepareCalender();
 		monthIndex = monthIndex + step;
 
 		if (monthIndex > 11) {
@@ -54,8 +57,7 @@
 		}
 	};
 
-	let bookingsInCurrentMonth: unknown[];
-	onMount(async () => {
+	const fetchAndPrepareCalender = async () => {
 		try {
 			loading = true;
 			const { data, error, status } = await supabaseClient.from('bokningar').select('*');
@@ -71,6 +73,38 @@
 
 			console.log(bookingsInCurrentMonth);
 
+			displayedDays = Array.from({ length: calendarCellsQty }, (x, i) => ({
+				id: i,
+				currentDay:
+					i === today.dayNumber + (firstDayIndex - 1) &&
+					i >= firstDayIndex &&
+					i < numberOfDays + firstDayIndex,
+				beforeFirstIndex: i < firstDayIndex,
+				afterLastIndex: i >= numberOfDays + firstDayIndex,
+				isBooked: false,
+				privateBooking: false
+			}));
+
+			bookingsInCurrentMonth.forEach((b) => {
+				const startDay = parseInt(b.from_date.split('-')[2]);
+				const endDay = parseInt(b.to_date.split('-')[2]);
+
+				const daysBooked = Array.from(
+					{ length: endDay - startDay + 1 },
+					(x, i) => i + startDay + firstDayIndex
+				);
+
+				daysBooked.forEach((element) => {
+					const index = displayedDays.findIndex((dd) => dd.id === element - 1);
+					if (index != null) {
+						displayedDays[index].isBooked = true;
+						displayedDays[index].privateBooking = b.type === 1;
+					}
+				});
+			});
+
+			console.log(displayedDays);
+
 			if (error && status !== 406) throw error;
 		} catch (error) {
 			if (error instanceof Error) {
@@ -79,6 +113,11 @@
 		} finally {
 			loading = false;
 		}
+	};
+
+	let bookingsInCurrentMonth: BookingDto[];
+	onMount(async () => {
+		await fetchAndPrepareCalender();
 	});
 </script>
 
@@ -123,25 +162,26 @@
 </section>
 
 <section class="m-0 bg-white w-full grid grid-cols-7">
-	{#each Array(calendarCellsQty) as _, i}
-		{#if i < firstDayIndex}
-			<div class="text-center text-sm p-1 border-gray-500 border text-gray-500">
-				{i - firstDayIndex + numberOfDaysPreviousMonth + 1}
-			</div>
-		{:else if i >= numberOfDays + firstDayIndex}
-			<div class="text-center text-sm p-1 border-gray-500 border text-gray-500">
-				{i - firstDayIndex - numberOfDays + 1}
-			</div>
-		{:else}
-			<div
-				class:font-extrabold={i === today.dayNumber + (firstDayIndex - 1) &&
-					monthIndex === today.month &&
-					year === today.year}
-				class="text-center text-md p-1 border-sky-900 border"
-				data-dateID={`${month}_${i - firstDayIndex + 1}_${year}`}
-			>
-				{i - firstDayIndex + 1}
-			</div>
-		{/if}
-	{/each}
+	{#if displayedDays.length > 0}
+		{#each displayedDays as day, i}
+			{#if day.beforeFirstIndex}
+				<div class="text-center text-sm p-1 border-gray-500 border text-gray-500 ">
+					{i - firstDayIndex + numberOfDaysPreviousMonth + 1}
+				</div>
+			{:else if day.afterLastIndex}
+				<div class="text-center text-sm p-1 border-gray-500 border text-gray-500">
+					{i - firstDayIndex - numberOfDays + 1}
+				</div>
+			{:else}
+				<div
+					class:font-extrabold={day.currentDay}
+					class:bg-green-300={day.isBooked}
+					class="text-center text-md p-1 border-sky-900 border"
+					data-dateID={`${month}_${i - firstDayIndex + 1}_${year}`}
+				>
+					{i - firstDayIndex + 1}
+				</div>
+			{/if}
+		{/each}
+	{/if}
 </section>
