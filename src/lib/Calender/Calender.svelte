@@ -92,9 +92,7 @@
 				const startDayMonth = parseInt(b.from_date.split('-')[1]);
 				const endDayMonth = parseInt(b.to_date.split('-')[1]);
 
-				if (startDayMonth !== monthIndex + 1 && endDayMonth !== monthIndex + 1) {
-					return;
-				} else if (startDayMonth !== monthIndex + 1 || endDayMonth !== monthIndex + 1) {
+				if (startDayMonth !== monthIndex + 1 || endDayMonth !== monthIndex + 1) {
 					console.log('b', b);
 					let daysWithinMonthBooked: number[];
 					let daysOutsideMonthBooked: number[];
@@ -103,8 +101,53 @@
 					let fromDateAsDate = new Date(b.from_date).valueOf();
 					let toDateAsDate = new Date(b.to_date).valueOf();
 
+					// den här månaden till nästa
+					// hjur många dagar i icke aktuella månaden
+					// kolla startdatum för bokning
+					// hur många dagar bokning är
+					// hur många dagar minus startdatum (om februari text 25 minus 28)
+					// om boknignen är längre än så så är det mellan månader
+					//
 					const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
 					let lengthOfBooking = Math.round(Math.abs((fromDateAsDate - toDateAsDate) / oneDay));
+
+					let lastDayOfMonth;
+					let endOfMonth;
+					let isOvelapping = false;
+					let daysInOtherMonth;
+					if (startDayMonth !== monthIndex + 1) {
+						endOfMonth = new Date(b.from_date);
+						lastDayOfMonth = new Date(
+							endOfMonth.getFullYear(),
+							endOfMonth.getMonth() + 1,
+							0
+						).valueOf();
+
+						if (lastDayOfMonth - endDay !== lengthOfBooking) {
+							isOvelapping = true;
+							daysInOtherMonth = lastDayOfMonth - endDay;
+						}
+					} else {
+						endOfMonth = new Date(b.to_date);
+						lastDayOfMonth = new Date(
+							endOfMonth.getFullYear(),
+							endOfMonth.getMonth() + 1,
+							0
+						).valueOf();
+
+						if (lastDayOfMonth - startDay !== lengthOfBooking) {
+							isOvelapping = true;
+							daysInOtherMonth = lastDayOfMonth - startDay;
+						}
+					}
+
+					let daysInPreviousBooked;
+					if (daysInOtherMonth) {
+						daysInPreviousBooked = Array.from(
+							{ length: daysInOtherMonth },
+							(x, i) => i + startDay + firstDayIndex
+						);
+					}
 
 					console.log('days booked', daysOverlappingBooked);
 
