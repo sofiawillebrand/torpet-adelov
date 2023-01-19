@@ -63,15 +63,16 @@
 			const { data, error, status } = await supabaseClient.from('bokningar').select('*');
 
 			if (data) {
-				bookingsInCurrentMonth = data.filter((d) => {
-					const fromMonth = parseInt(d.from_date.split('-')[1]);
-					const toMonth = parseInt(d.to_date.split('-')[1]);
+				bookingsCurrentAdjacentMonth = data.filter((d) => {
+					let fromMonth = parseInt(d.from_date.split('-')[1]) - 1;
+					let toMonth = parseInt(d.to_date.split('-')[1]) + 1;
 
 					if (fromMonth === monthIndex + 1 || toMonth === monthIndex + 1) return true;
+					else if (fromMonth === monthIndex || toMonth === monthIndex) return true;
 				});
 			}
 
-			console.log(bookingsInCurrentMonth);
+			console.log(bookingsCurrentAdjacentMonth);
 
 			displayedDays = Array.from({ length: calendarCellsQty }, (x, i) => ({
 				id: i,
@@ -85,22 +86,51 @@
 				privateBooking: false
 			}));
 
-			bookingsInCurrentMonth.forEach((b) => {
+			bookingsCurrentAdjacentMonth.forEach((b) => {
 				const startDay = parseInt(b.from_date.split('-')[2]);
 				const endDay = parseInt(b.to_date.split('-')[2]);
+				const startDayMonth = parseInt(b.from_date.split('-')[1]);
+				const endDayMonth = parseInt(b.to_date.split('-')[1]);
 
-				const daysBooked = Array.from(
-					{ length: endDay - startDay + 1 },
-					(x, i) => i + startDay + firstDayIndex
-				);
+				if (startDayMonth !== monthIndex + 1 && endDayMonth !== monthIndex + 1) {
+					return;
+				} else if (startDayMonth !== monthIndex + 1 || endDayMonth !== monthIndex + 1) {
+					console.log('b', b);
+					let daysWithinMonthBooked: number[];
+					let daysOutsideMonthBooked: number[];
+					let daysOverlappingBooked: number[];
 
-				daysBooked.forEach((element) => {
-					const index = displayedDays.findIndex((dd) => dd.id === element - 1);
-					if (index != null) {
-						displayedDays[index].isBooked = true;
-						displayedDays[index].privateBooking = b.type === 1;
-					}
-				});
+					let fromDateAsDate = new Date(b.from_date).valueOf();
+					let toDateAsDate = new Date(b.to_date).valueOf();
+
+					const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+					let lengthOfBooking = Math.round(Math.abs((fromDateAsDate - toDateAsDate) / oneDay));
+
+					console.log('days booked', daysOverlappingBooked);
+
+					daysOverlappingBooked.forEach((element) => {
+						const index = displayedDays.findIndex((dd) => dd.id === element - 1);
+						if (index != null) {
+							displayedDays[index].isBooked = true;
+							displayedDays[index].privateBooking = b.type === 1;
+						}
+					});
+				} else {
+					const daysBooked = Array.from(
+						{ length: endDay - startDay + 1 },
+						(x, i) => i + startDay + firstDayIndex
+					);
+
+					console.log('days within month booked', daysBooked);
+
+					daysBooked.forEach((element) => {
+						const index = displayedDays.findIndex((dd) => dd.id === element - 1);
+						if (index != null) {
+							displayedDays[index].isBooked = true;
+							displayedDays[index].privateBooking = b.type === 1;
+						}
+					});
+				}
 			});
 
 			console.log(displayedDays);
@@ -115,7 +145,7 @@
 		}
 	};
 
-	let bookingsInCurrentMonth: BookingDto[];
+	let bookingsCurrentAdjacentMonth: BookingDto[];
 	onMount(async () => {
 		await fetchAndPrepareCalender();
 	});
@@ -174,7 +204,7 @@
 				</div>
 			{:else}
 				<div
-					class:font-extrabold={day.currentDay}
+					class:font-extrabold={day.currentDay && monthIndex === today.month}
 					class:bg-green-300={day.isBooked}
 					class="text-center text-md p-1 border-sky-900 border"
 					data-dateID={`${month}_${i - firstDayIndex + 1}_${year}`}
