@@ -73,8 +73,6 @@
 				});
 			}
 
-			console.log('bookings in current and adjecent', bookingsCurrentAdjacentMonth);
-
 			displayedDays = Array.from({ length: calendarCellsQty }, (x, i) => ({
 				id: i,
 				currentDay:
@@ -193,8 +191,6 @@
 					});
 				}
 			});
-
-			console.log(displayedDays);
 
 			if (error && status !== 406) throw error;
 		} catch (error) {

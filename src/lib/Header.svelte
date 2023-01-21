@@ -24,6 +24,13 @@
 				Kalender
 			</a>
 			<a
+				href="/mina-bokningar"
+				class="mt-4 inline-block lg:mt-0  hover:text-white
+			{onRoute === '/mina-bokningar' ? 'font-bold text-white' : 'text-teal-200'}"
+			>
+				Mina bokningar
+			</a>
+			<a
 				href="/mina-uppgifter"
 				class="mt-4 inline-block lg:mt-0  hover:text-white
 				{onRoute === '/mina-uppgifter' ? 'font-bold text-white' : 'text-teal-200'}"
