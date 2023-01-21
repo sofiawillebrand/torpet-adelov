@@ -4,10 +4,13 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import type { BookingDto } from '$lib/DataDto';
+	import Modal from './Modal.svelte';
 
 	let loading = false;
 	let session: AuthSession;
 	let myBookings: BookingDto[] = [];
+	let selectedBooking: BookingDto;
+	let showDeletePopup = false;
 
 	if ($page.data.session) {
 		session = $page.data.session;
@@ -19,7 +22,7 @@
 			const { data, error, status } = await supabaseClient
 				.from('bokningar')
 				.select()
-				.eq('userid', session?.user.id)
+				.eq('user_id', session?.user.id)
 				.order('from_date', { ascending: true });
 
 			myBookings = data as BookingDto[];
@@ -34,10 +37,54 @@
 		}
 	};
 
+	const deleteBooking = async () => {
+		try {
+			loading = true;
+			const { error } = await supabaseClient
+				.from('bokningar')
+				.delete()
+				.eq('id', selectedBooking.id);
+
+			if (error) throw error;
+		} catch (error) {
+			if (error instanceof Error) {
+				alert(error.message);
+			}
+		} finally {
+			loading = false;
+			showDeletePopup = false;
+			fetchBookingData();
+		}
+	};
+
 	onMount(async () => {
 		await fetchBookingData();
 	});
 </script>
+
+{#if showDeletePopup}
+	<Modal title={'Boka vistelse'} on:close={() => (showDeletePopup = false)}>
+		<div slot="content" class="bg-white">
+			Är du säker på att du vill ta bort bokningen för datumen <span
+				>{selectedBooking.from_date}</span
+			>
+			<span> till </span>
+			<span>{selectedBooking.to_date}</span>?
+		</div>
+		<div slot="footer">
+			<button
+				class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded mb-6"
+				on:click={() => (showDeletePopup = false)}>Avbryt</button
+			>
+			<button
+				class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded"
+				on:click={() => deleteBooking()}
+			>
+				Ja
+			</button>
+		</div>
+	</Modal>
+{/if}
 
 <div class=" px-8 pt-6 pb-8 mb-4 bg-white rounded">
 	<h1 class=" text-lg font-semibold">Mina bokningar</h1>
@@ -54,6 +101,13 @@
 				<span> till </span>
 				<span>{booking.to_date}</span>
 			</div>
+			<button
+				class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded mb-6"
+				on:click={() => {
+					showDeletePopup = true;
+					selectedBooking = booking;
+				}}>Ta bort</button
+			>
 		{/each}
 	{/if}
 </div>

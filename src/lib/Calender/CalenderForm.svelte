@@ -65,7 +65,7 @@
 		</div>
 		<div class="mb-6">
 			<p class="block text-gray-700 text-sm font-bold mb-2">
-				Vill du tillåta andra att boka samma datum:
+				Föredrar du att vara själv på torpet under denna bokning:
 			</p>
 			<input id="allow-other" type="radio" name="allow" value={0} bind:group={$bookingStore.type} />
 			<label class=" text-gray-700 text-sm mb-2" for="allow-other"> Ja </label>
