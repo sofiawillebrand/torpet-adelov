@@ -64,15 +64,16 @@
 
 			if (data) {
 				bookingsCurrentAdjacentMonth = data.filter((d) => {
-					let fromMonth = parseInt(d.from_date.split('-')[1]) - 1;
-					let toMonth = parseInt(d.to_date.split('-')[1]) + 1;
+					let fromMonth = parseInt(d.from_date.split('-')[1]);
+					let toMonth = parseInt(d.to_date.split('-')[1]);
 
-					if (fromMonth === monthIndex + 1 || toMonth === monthIndex + 1) return true;
+					if (fromMonth === monthIndex + 2 || toMonth === monthIndex + 2) return true;
 					else if (fromMonth === monthIndex || toMonth === monthIndex) return true;
+					else if (fromMonth === monthIndex + 1 || toMonth === monthIndex + 1) return true;
 				});
 			}
 
-			console.log(bookingsCurrentAdjacentMonth);
+			console.log('bookings in current and adjecent', bookingsCurrentAdjacentMonth);
 
 			displayedDays = Array.from({ length: calendarCellsQty }, (x, i) => ({
 				id: i,
@@ -91,80 +92,97 @@
 				const endDay = parseInt(b.to_date.split('-')[2]);
 				const startDayMonth = parseInt(b.from_date.split('-')[1]);
 				const endDayMonth = parseInt(b.to_date.split('-')[1]);
+				const fromDate = new Date(b.from_date);
 
-				if (startDayMonth !== monthIndex + 1 || endDayMonth !== monthIndex + 1) {
-					console.log('b', b);
-					let daysWithinMonthBooked: number[];
-					let daysOutsideMonthBooked: number[];
-					let daysOverlappingBooked: number[];
-
+				if (startDayMonth !== monthIndex + 1 && endDayMonth !== monthIndex + 1) return;
+				else {
 					let fromDateAsDate = new Date(b.from_date).valueOf();
 					let toDateAsDate = new Date(b.to_date).valueOf();
-
-					// den här månaden till nästa
-					// hjur många dagar i icke aktuella månaden
-					// kolla startdatum för bokning
-					// hur många dagar bokning är
-					// hur många dagar minus startdatum (om februari text 25 minus 28)
-					// om boknignen är längre än så så är det mellan månader
 					//
 					const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
 					let lengthOfBooking = Math.round(Math.abs((fromDateAsDate - toDateAsDate) / oneDay));
+					const lastDayOfPreviousMonth = new Date(
+						fromDate.getFullYear(),
+						fromDate.getMonth() + 1,
+						0
+					).getDate();
 
-					let lastDayOfMonth;
-					let endOfMonth;
-					let isOvelapping = false;
-					let daysInOtherMonth;
-					if (startDayMonth !== monthIndex + 1) {
-						endOfMonth = new Date(b.from_date);
-						lastDayOfMonth = new Date(
-							endOfMonth.getFullYear(),
-							endOfMonth.getMonth() + 1,
-							0
-						).valueOf();
+					// booking start before month that is viewed
+					let daysInPreviousMonth: number = 0;
+					let isOvelappingPreviousMonth = false;
+					if (startDayMonth < monthIndex + 1) {
+						const firstDayBooked = new Date(b.from_date).getDate();
 
-						if (lastDayOfMonth - endDay !== lengthOfBooking) {
-							isOvelapping = true;
-							daysInOtherMonth = lastDayOfMonth - endDay;
-						}
-					} else {
-						endOfMonth = new Date(b.to_date);
-						lastDayOfMonth = new Date(
-							endOfMonth.getFullYear(),
-							endOfMonth.getMonth() + 1,
-							0
-						).valueOf();
-
-						if (lastDayOfMonth - startDay !== lengthOfBooking) {
-							isOvelapping = true;
-							daysInOtherMonth = lastDayOfMonth - startDay;
+						if (lastDayOfPreviousMonth - endDay !== lengthOfBooking) {
+							isOvelappingPreviousMonth = true;
+							daysInPreviousMonth = lastDayOfPreviousMonth - firstDayBooked + 1;
 						}
 					}
 
-					let daysInPreviousBooked;
-					if (daysInOtherMonth) {
+					// booking end after month that is viewed
+					let daysInNextMonth: number = 0;
+					let isOvelappingNextMonth = false;
+					if (endDayMonth > monthIndex + 1) {
+						const endDate = new Date(b.to_date);
+						const lastDayOfNextMonth = new Date(
+							endDate.getFullYear(),
+							endDate.getMonth() + 1,
+							0
+						).getDate();
+
+						if (lastDayOfNextMonth - startDay !== lengthOfBooking) {
+							isOvelappingNextMonth = true;
+							daysInNextMonth = lastDayOfNextMonth - startDay;
+						}
+					}
+
+					let daysInCurrentMonth: number[] = [];
+					let lastDayBookedInCurrentMonth = endDay;
+					let firstDayBookedInCurrentMonth = startDay;
+					let dayToUseForCurrentMonthStart = startDay;
+
+					if (isOvelappingNextMonth && isOvelappingPreviousMonth) {
+						firstDayBookedInCurrentMonth = 1;
+						lastDayBookedInCurrentMonth = new Date(
+							date.getFullYear(),
+							date.getMonth() + 1,
+							0
+						).getDate();
+					} else if (isOvelappingNextMonth) {
+						firstDayBookedInCurrentMonth = new Date(
+							date.getFullYear(),
+							date.getMonth(),
+							1
+						).getDate();
+					} else if (isOvelappingPreviousMonth) {
+						firstDayBookedInCurrentMonth = 1;
+						dayToUseForCurrentMonthStart = 1;
+					}
+
+					daysInCurrentMonth = Array.from(
+						{ length: lastDayBookedInCurrentMonth - firstDayBookedInCurrentMonth + 1 },
+						(x, i) => i + dayToUseForCurrentMonthStart + firstDayIndex
+					);
+
+					let daysInPreviousBooked: number[] = [];
+					if (daysInPreviousMonth > 0) {
 						daysInPreviousBooked = Array.from(
-							{ length: daysInOtherMonth },
-							(x, i) => i + startDay + firstDayIndex
+							{ length: daysInPreviousMonth },
+							(x, i) => firstDayIndex - i
 						);
 					}
 
-					console.log('days booked', daysOverlappingBooked);
+					let daysInNextBooked: number[] = [];
+					if (daysInNextMonth > 0) {
+						daysInNextBooked = Array.from(
+							{ length: daysInNextMonth },
+							(x, i) => i + startDay + firstDayIndex + daysInNextMonth
+						);
+					}
 
-					daysOverlappingBooked.forEach((element) => {
-						const index = displayedDays.findIndex((dd) => dd.id === element - 1);
-						if (index != null) {
-							displayedDays[index].isBooked = true;
-							displayedDays[index].privateBooking = b.type === 1;
-						}
-					});
-				} else {
-					const daysBooked = Array.from(
-						{ length: endDay - startDay + 1 },
-						(x, i) => i + startDay + firstDayIndex
-					);
-
-					console.log('days within month booked', daysBooked);
+					const daysBooked = daysInPreviousBooked
+						.concat(daysInCurrentMonth)
+						.concat(daysInNextBooked);
 
 					daysBooked.forEach((element) => {
 						const index = displayedDays.findIndex((dd) => dd.id === element - 1);
@@ -238,11 +256,17 @@
 	{#if displayedDays.length > 0}
 		{#each displayedDays as day, i}
 			{#if day.beforeFirstIndex}
-				<div class="text-center text-sm p-1 border-gray-500 border text-gray-500 ">
+				<div
+					class:bg-green-300={day.isBooked}
+					class="text-center text-sm p-1 border-gray-500 border text-gray-500 "
+				>
 					{i - firstDayIndex + numberOfDaysPreviousMonth + 1}
 				</div>
 			{:else if day.afterLastIndex}
-				<div class="text-center text-sm p-1 border-gray-500 border text-gray-500">
+				<div
+					class:bg-green-300={day.isBooked}
+					class="text-center text-sm p-1 border-gray-500 border text-gray-500"
+				>
 					{i - firstDayIndex - numberOfDays + 1}
 				</div>
 			{:else}
