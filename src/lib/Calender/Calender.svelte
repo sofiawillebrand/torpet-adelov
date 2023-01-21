@@ -4,7 +4,7 @@
 	import { supabaseClient } from '$lib/db';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import type { BookingDto, ContentOfDate } from './Calender';
+	import type { BookingDto, ContentOfDate } from '../DataDto';
 
 	let loading = false;
 	let session: AuthSession;
@@ -217,64 +217,69 @@
 	<CalenderForm bind:showModal />
 {/if}
 
-<button
-	class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded mb-6"
-	on:click={() => (showModal = true)}>Lägg till en bokning</button
->
+<div class=" md:px-8 pt-6 pb-8 mb-4 bg-white rounded">
+	<button
+		class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded mb-6"
+		on:click={() => (showModal = true)}>Lägg till en bokning</button
+	>
 
-<section class=" px-3 py-1 w-full bg-sky-900 text-center rounded-t">
-	<div class="h-16">
-		<button
-			class="text-white text-xl uppercase float-left h-16 w-8 text-center"
-			on:click={() => updateMonth(-1)}
-			>&#10094;
-		</button>
-		<button
-			class="text-white text-xl uppercase float-right h-16 w-8 text-center"
-			on:click={() => updateMonth(1)}
-			>&#10095;
-		</button>
-		<p class="text-white my-auto">{month}<br /><span>{year}</span></p>
-	</div>
-</section>
+	<section class=" w-full bg-sky-900 text-center rounded-t">
+		<div class="h-16">
+			<button
+				class="text-white text-xl uppercase float-left h-16 w-8 text-center"
+				on:click={() => updateMonth(-1)}
+				>&#10094;
+			</button>
+			<button
+				class="text-white text-xl uppercase float-right h-16 w-8 text-center"
+				on:click={() => updateMonth(1)}
+				>&#10095;
+			</button>
+			<p class="text-white my-auto">{month}<br /><span>{year}</span></p>
+		</div>
+	</section>
 
-<section class="m-0 bg-gray-300 w-full grid grid-cols-7">
-	<div class="text-center mb-1 text-sm p-1">Må</div>
-	<div class="text-center mb-1 text-sm p-1">Ti</div>
-	<div class="text-center mb-1 text-sm p-1">On</div>
-	<div class="text-center mb-1 text-sm p-1">To</div>
-	<div class="text-center mb-1 text-sm p-1">Fr</div>
-	<div class="text-center mb-1 text-sm p-1">Lö</div>
-	<div class="text-center mb-1 text-sm p-1">Sö</div>
-</section>
+	<section class="m-0 bg-gray-300 w-full grid grid-cols-7">
+		<div class="text-center mb-1 text-sm p-1">Må</div>
+		<div class="text-center mb-1 text-sm p-1">Ti</div>
+		<div class="text-center mb-1 text-sm p-1">On</div>
+		<div class="text-center mb-1 text-sm p-1">To</div>
+		<div class="text-center mb-1 text-sm p-1">Fr</div>
+		<div class="text-center mb-1 text-sm p-1">Lö</div>
+		<div class="text-center mb-1 text-sm p-1">Sö</div>
+	</section>
 
-<section class="m-0 bg-white w-full grid grid-cols-7">
-	{#if displayedDays.length > 0}
-		{#each displayedDays as day, i}
-			{#if day.beforeFirstIndex}
-				<div
-					class:bg-green-300={day.isBooked}
-					class="text-center text-sm p-1 border-gray-500 border text-gray-500 "
-				>
-					{i - firstDayIndex + numberOfDaysPreviousMonth + 1}
-				</div>
-			{:else if day.afterLastIndex}
-				<div
-					class:bg-green-300={day.isBooked}
-					class="text-center text-sm p-1 border-gray-500 border text-gray-500"
-				>
-					{i - firstDayIndex - numberOfDays + 1}
-				</div>
-			{:else}
-				<div
-					class:font-extrabold={day.currentDay && monthIndex === today.month}
-					class:bg-green-300={day.isBooked}
-					class="text-center text-md p-1 border-sky-900 border"
-					data-dateID={`${month}_${i - firstDayIndex + 1}_${year}`}
-				>
-					{i - firstDayIndex + 1}
-				</div>
-			{/if}
-		{/each}
-	{/if}
-</section>
+	<section class="m-0 bg-white w-full grid grid-cols-7">
+		{#if displayedDays.length > 0}
+			{#each displayedDays as day, i}
+				{#if day.beforeFirstIndex}
+					<div
+						class:bg-teal-300={day.isBooked && !day.privateBooking}
+						class:bg-fuchsia-300={day.isBooked && day.privateBooking}
+						class="text-center text-sm p-1 border-gray-500 border text-gray-500 "
+					>
+						{i - firstDayIndex + numberOfDaysPreviousMonth + 1}
+					</div>
+				{:else if day.afterLastIndex}
+					<div
+						class:bg-teal-300={day.isBooked && !day.privateBooking}
+						class:bg-fuchsia-300={day.isBooked && day.privateBooking}
+						class="text-center text-sm p-1 border-gray-500 border text-gray-500"
+					>
+						{i - firstDayIndex - numberOfDays + 1}
+					</div>
+				{:else}
+					<div
+						class:font-extrabold={day.currentDay && monthIndex === today.month}
+						class:bg-teal-300={day.isBooked && !day.privateBooking}
+						class:bg-fuchsia-300={day.isBooked && day.privateBooking}
+						class="text-center text-md p-1 border-sky-900 border"
+						data-dateID={`${month}_${i - firstDayIndex + 1}_${year}`}
+					>
+						{i - firstDayIndex + 1}
+					</div>
+				{/if}
+			{/each}
+		{/if}
+	</section>
+</div>

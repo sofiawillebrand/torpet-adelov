@@ -75,7 +75,7 @@
 	};
 </script>
 
-<form class=" px-8 pt-6 pb-8 mb-4 bg-white" on:submit|preventDefault={updateProfile}>
+<form class=" px-8 pt-6 pb-8 mb-4 rounded bg-white" on:submit|preventDefault={updateProfile}>
 	<div class="mb-4">
 		<label for="email">E-mail</label>
 		<input
