@@ -24,7 +24,7 @@
 	<p class="mb-4">
 		Logga in genom att ange din mail nedan. Du kommer sedan att få ett mail till den adress du
 		skrivit in, det mailet kommer att innehålla en "magic link" som du ska klicka på. När du klickat
-		på länken kommer du att loggas in i en ny flik på samma enhet som du öppnar länker.
+		på länken kommer du att loggas in i en ny flik på samma enhet som du öppnar länken.
 	</p>
 	<div class="mb-4">
 		<input
