@@ -11,32 +11,34 @@
 		<div class="text-sm flex-grow">
 			<a
 				href="/"
-				class="mt-4 inline-block lg:mt-0 hover:text-white mr-4 
+				class="mt-4 inline-block lg:mt-0 hover:text-white mr-2 
 				{onRoute === '/' ? 'font-bold text-white' : 'text-teal-200'}"
 			>
 				Info
 			</a>
-			<a
-				href="/kalender"
-				class="mt-4 inline-block lg:mt-0 hover:text-white mr-4
+			{#if $page.data.session}
+				<a
+					href="/kalender"
+					class="mt-4 inline-block lg:mt-0 hover:text-white mr-2
 				{onRoute === '/kalender' ? 'font-bold text-white' : 'text-teal-200'}"
-			>
-				Kalender
-			</a>
-			<a
-				href="/mina-bokningar"
-				class="mt-4 inline-block lg:mt-0  hover:text-white
+				>
+					Kalender
+				</a>
+				<a
+					href="/mina-bokningar"
+					class="mt-4 inline-block lg:mt-0  hover:text-white mr-2
 			{onRoute === '/mina-bokningar' ? 'font-bold text-white' : 'text-teal-200'}"
-			>
-				Mina bokningar
-			</a>
-			<a
-				href="/mina-uppgifter"
-				class="mt-4 inline-block lg:mt-0  hover:text-white
+				>
+					Mina bokningar
+				</a>
+				<a
+					href="/mina-uppgifter"
+					class="mt-4 inline-block lg:mt-0  hover:text-white
 				{onRoute === '/mina-uppgifter' ? 'font-bold text-white' : 'text-teal-200'}"
-			>
-				Mina uppgifter
-			</a>
+				>
+					Mina uppgifter
+				</a>
+			{/if}
 		</div>
 	</div>
 </nav>
