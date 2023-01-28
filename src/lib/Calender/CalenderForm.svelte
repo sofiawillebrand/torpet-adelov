@@ -22,7 +22,7 @@
 			const { user } = session;
 
 			const booking = {
-				userid: user.id,
+				user_id: user.id,
 				from_date: $bookingStore.startdate,
 				to_date: $bookingStore.enddate,
 				type: $bookingStore.type
