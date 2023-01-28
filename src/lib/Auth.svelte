@@ -9,7 +9,7 @@
 			loading = true;
 			const { error } = await supabaseClient.auth.signInWithOtp({ email });
 			if (error) throw error;
-			alert('Check your email for the login link!');
+			alert('En magic link borde dyka upp i din inkorg inom några minuter!');
 		} catch (error) {
 			if (error instanceof Error) {
 				alert(error.message);

@@ -6,7 +6,7 @@
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
 
-	const handle_keydown = (e: KeyboardEvent) => {
+	const handleKeydown = (e: KeyboardEvent) => {
 		if (e.key === 'Escape') {
 			close();
 			return;
@@ -14,7 +14,7 @@
 	};
 </script>
 
-<svelte:window on:keydown={handle_keydown} />
+<svelte:window on:keydown={handleKeydown} />
 
 <div class=" fixed top-0 left-0 w-full h-full bg-gray-400 bg-opacity-50" on:click={close} />
 

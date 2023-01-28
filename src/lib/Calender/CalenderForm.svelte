@@ -9,6 +9,10 @@
 	let loading = false;
 	let session: AuthSession;
 
+	let title = 'Boka din vistelse: ' + $bookingStore.startdate;
+
+	let date = new Intl.DateTimeFormat('en-US').format($bookingStore.startdate);
+
 	if ($page.data.session) {
 		session = $page.data.session;
 	}
@@ -39,7 +43,7 @@
 	};
 </script>
 
-<Modal title={'Boka vistelse'} on:close={() => (showModal = false)}>
+<Modal {title} on:close={() => (showModal = false)}>
 	<form slot="content" class="bg-white">
 		<p class=" text-gray-700 text-sm  mb-4">
 			Observera att din email och ditt namn kommer att synas vid de datum du bokar för andra som har
@@ -51,7 +55,7 @@
 				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				id="startdate"
 				type="date"
-				bind:value={$bookingStore.startdate}
+				bind:value={date}
 			/>
 		</div>
 		<div class="mb-6">

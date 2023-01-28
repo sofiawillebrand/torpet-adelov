@@ -5,6 +5,8 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import type { BookingDto, ContentOfDate } from '../DataDto';
+	import { bookingStore } from '../../booking-store';
+	import Account from '$lib/Account.svelte';
 
 	let loading = false;
 	let session: AuthSession;
@@ -37,12 +39,44 @@
 	let year: number = date.getFullYear();
 	let showModal = false;
 	let displayedDays: ContentOfDate[] = [];
+	let selectedDate: Date = date;
 
 	$: month = monthNames[monthIndex];
 	$: firstDayIndex = new Date(year, monthIndex, 1).getDay();
 	$: numberOfDays = new Date(year, monthIndex + 1, 0).getDate();
 	$: numberOfDaysPreviousMonth = new Date(year, monthIndex, 0).getDate();
 	$: calendarCellsQty = firstDayIndex <= 4 ? 35 : 42;
+
+	const openDate = (day: ContentOfDate) => {
+		let selectedYear = year;
+		let selectedMonth = monthIndex;
+		if (day.beforeFirstIndex) {
+			if (monthIndex - 1 === -1) {
+				selectedYear -= 1;
+				selectedMonth = 11;
+			} else {
+				selectedMonth -= 1;
+			}
+			const dayOfMonth = day.id - firstDayIndex + numberOfDaysPreviousMonth + 1;
+			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth);
+		} else if (day.afterLastIndex) {
+			if (monthIndex + 1 === 12) {
+				selectedYear += 1;
+				selectedMonth = 1;
+			} else {
+				selectedMonth += 1;
+			}
+			const dayOfMonth = day.id - firstDayIndex - numberOfDays + 1;
+			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth);
+		} else {
+			day.id;
+			const dayOfMonth = day.id - firstDayIndex + 1;
+			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth);
+		}
+		bookingStore.update((booking) => ({ ...booking, startdate: selectedDate }));
+		console.log($bookingStore);
+		showModal = true;
+	};
 
 	const updateMonth = (step: number) => {
 		fetchAndPrepareCalender();
@@ -253,31 +287,34 @@
 		{#if displayedDays.length > 0}
 			{#each displayedDays as day, i}
 				{#if day.beforeFirstIndex}
-					<div
+					<button
 						class:bg-teal-300={day.isBooked && !day.privateBooking}
 						class:bg-fuchsia-300={day.isBooked && day.privateBooking}
 						class="text-center text-sm p-1 border-gray-500 border text-gray-500 "
+						on:click={() => openDate(day)}
 					>
 						{i - firstDayIndex + numberOfDaysPreviousMonth + 1}
-					</div>
+					</button>
 				{:else if day.afterLastIndex}
-					<div
+					<button
 						class:bg-teal-300={day.isBooked && !day.privateBooking}
 						class:bg-fuchsia-300={day.isBooked && day.privateBooking}
 						class="text-center text-sm p-1 border-gray-500 border text-gray-500"
+						on:click={() => openDate(day)}
 					>
 						{i - firstDayIndex - numberOfDays + 1}
-					</div>
+					</button>
 				{:else}
-					<div
+					<button
 						class:font-extrabold={day.currentDay && monthIndex === today.month}
 						class:bg-teal-300={day.isBooked && !day.privateBooking}
 						class:bg-fuchsia-300={day.isBooked && day.privateBooking}
 						class="text-center text-md p-1 border-sky-900 border"
 						data-dateID={`${month}_${i - firstDayIndex + 1}_${year}`}
+						on:click={() => openDate(day)}
 					>
 						{i - firstDayIndex + 1}
-					</div>
+					</button>
 				{/if}
 			{/each}
 		{/if}
