@@ -39,7 +39,7 @@
 	let year: number = date.getFullYear();
 	let showModal = false;
 	let displayedDays: ContentOfDate[] = [];
-	let selectedDate: Date = date;
+	let selectedDate: string = date.toISOString().split('T')[0];
 
 	$: month = monthNames[monthIndex];
 	$: firstDayIndex = new Date(year, monthIndex, 1).getDay();
@@ -58,7 +58,7 @@
 				selectedMonth -= 1;
 			}
 			const dayOfMonth = day.id - firstDayIndex + numberOfDaysPreviousMonth + 1;
-			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth);
+			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth).toISOString().split('T')[0];
 		} else if (day.afterLastIndex) {
 			if (monthIndex + 1 === 12) {
 				selectedYear += 1;
@@ -67,13 +67,17 @@
 				selectedMonth += 1;
 			}
 			const dayOfMonth = day.id - firstDayIndex - numberOfDays + 1;
-			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth);
+			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth).toISOString().split('T')[0];
 		} else {
 			day.id;
 			const dayOfMonth = day.id - firstDayIndex + 1;
-			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth);
+			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth).toISOString().split('T')[0];
 		}
-		bookingStore.update((booking) => ({ ...booking, startdate: selectedDate }));
+		bookingStore.update((booking) => ({
+			...booking,
+			startdate: selectedDate,
+			enddate: selectedDate
+		}));
 		console.log($bookingStore);
 		showModal = true;
 	};
@@ -82,11 +86,11 @@
 		fetchAndPrepareCalender();
 		monthIndex = monthIndex + step;
 
-		if (monthIndex > 11) {
+		if (monthIndex === 12) {
 			monthIndex = 0;
 			year = year + 1;
-		} else if (monthIndex < 0) {
-			monthIndex = 0;
+		} else if (monthIndex === -1) {
+			monthIndex = 11;
 			year = year - 1;
 		}
 	};
@@ -124,9 +128,12 @@
 				const endDay = parseInt(b.to_date.split('-')[2]);
 				const startDayMonth = parseInt(b.from_date.split('-')[1]);
 				const endDayMonth = parseInt(b.to_date.split('-')[1]);
+				const startDayYear = parseInt(b.from_date.split('-')[0]);
+				const endDayYear = parseInt(b.to_date.split('-')[0]);
 				const fromDate = new Date(b.from_date);
 
 				if (startDayMonth !== monthIndex + 1 && endDayMonth !== monthIndex + 1) return;
+				if (startDayYear !== year && endDayYear !== year) return;
 				else {
 					let fromDateAsDate = new Date(b.from_date).valueOf();
 					let toDateAsDate = new Date(b.to_date).valueOf();

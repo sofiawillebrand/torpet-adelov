@@ -4,14 +4,13 @@
 	import Modal from '$lib/Modal.svelte';
 	import { bookingStore } from '../../booking-store';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	export let showModal = false;
 	let loading = false;
 	let session: AuthSession;
 
 	let title = 'Boka din vistelse: ' + $bookingStore.startdate;
-
-	let date = new Intl.DateTimeFormat('en-US').format($bookingStore.startdate);
 
 	if ($page.data.session) {
 		session = $page.data.session;
@@ -52,19 +51,19 @@
 		<div class="mb-4">
 			<label class="block text-gray-700 text-sm font-bold mb-2" for="startdate"> Startdatum </label>
 			<input
+				type="date"
+				bind:value={$bookingStore.startdate}
 				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				id="startdate"
-				type="date"
-				bind:value={date}
 			/>
 		</div>
 		<div class="mb-6">
 			<label class="block text-gray-700 text-sm font-bold mb-2" for="enddate"> Slutdatum </label>
 			<input
-				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-				id="enddate"
 				type="date"
 				bind:value={$bookingStore.enddate}
+				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+				id="enddate"
 			/>
 		</div>
 		<div class="mb-6">
