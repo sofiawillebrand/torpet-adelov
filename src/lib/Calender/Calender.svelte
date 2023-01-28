@@ -78,7 +78,6 @@
 			startdate: selectedDate,
 			enddate: selectedDate
 		}));
-		console.log($bookingStore);
 		showModal = true;
 	};
 
@@ -249,10 +248,8 @@
 	});
 </script>
 
-<!-- TODO: Click on calender and open booking on that day -->
 <!-- TODO: Display other bookings on page if dates overlap with other -->
 <!-- TODO: Possibility to add comment to booking -->
-<!-- TODO: Section for overlooking a booking -->
 
 {#if showModal}
 	<CalenderForm bind:showModal />
@@ -263,6 +260,10 @@
 		class="bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded mb-6"
 		on:click={() => (showModal = true)}>Lägg till en bokning</button
 	>
+
+	<h2 class="text-xl font-semibold text-gray-900 dark:text-white">Färgkodning</h2>
+	<div class="bg-teal-300 p-1 w-max my-2">Öppen bokning</div>
+	<div class="bg-fuchsia-300 p-1 w-max my-2">Privat bokning</div>
 
 	<section class=" w-full bg-sky-900 text-center rounded-t">
 		<div class="h-16">
