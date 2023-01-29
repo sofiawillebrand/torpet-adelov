@@ -42,7 +42,7 @@
 	let selectedDate: string = date.toISOString().split('T')[0];
 
 	$: month = monthNames[monthIndex];
-	$: firstDayIndex = new Date(year, monthIndex, 1).getDay();
+	$: firstDayIndex = new Date(year, monthIndex, 1 - 1).getDay();
 	$: numberOfDays = new Date(year, monthIndex + 1, 0).getDate();
 	$: numberOfDaysPreviousMonth = new Date(year, monthIndex, 0).getDate();
 	$: calendarCellsQty = firstDayIndex <= 4 ? 35 : 42;
@@ -58,7 +58,9 @@
 				selectedMonth -= 1;
 			}
 			const dayOfMonth = day.id - firstDayIndex + numberOfDaysPreviousMonth + 1;
-			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth).toISOString().split('T')[0];
+			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth, 3)
+				.toISOString()
+				.split('T')[0];
 		} else if (day.afterLastIndex) {
 			if (monthIndex + 1 === 12) {
 				selectedYear += 1;
@@ -67,11 +69,15 @@
 				selectedMonth += 1;
 			}
 			const dayOfMonth = day.id - firstDayIndex - numberOfDays + 1;
-			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth).toISOString().split('T')[0];
+			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth, 3)
+				.toISOString()
+				.split('T')[0];
 		} else {
 			day.id;
 			const dayOfMonth = day.id - firstDayIndex + 1;
-			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth).toISOString().split('T')[0];
+			selectedDate = new Date(selectedYear, selectedMonth, dayOfMonth, 3)
+				.toISOString()
+				.split('T')[0];
 		}
 		bookingStore.update((booking) => ({
 			...booking,
