@@ -42,11 +42,14 @@
 	};
 </script>
 
-<Modal {title} on:close={() => (showModal = false)}>
+<Modal
+	title={'Boka din vistelse: ' + $bookingStore.startdate + ' till ' + $bookingStore.enddate}
+	on:close={() => (showModal = false)}
+>
 	<form slot="content" class="bg-white">
 		<p class=" text-gray-700 text-sm  mb-4">
-			Observera att din email och ditt namn kommer att synas vid de datum du bokar för andra som har
-			tillgång till kalendern.
+			Observera att ditt namn och eventuell kommentar kommer att synas för andra som har tillgång
+			till kalendern.
 		</p>
 		<div class="mb-4">
 			<label class="block text-gray-700 text-sm font-bold mb-2" for="startdate"> Startdatum </label>
@@ -80,6 +83,15 @@
 				bind:group={$bookingStore.type}
 			/>
 			<label class=" text-gray-700 text-sm mb-2" for="dont-allow-other"> Nej </label>
+		</div>
+		<div class="mb-6">
+			<label class="block text-gray-700 text-sm font-bold mb-2" for="comment"> Kommentar </label>
+			<textarea
+				bind:value={$bookingStore.comment}
+				placeholder="Ny kommentar"
+				class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+				id="comment"
+			/>
 		</div>
 	</form>
 	<button

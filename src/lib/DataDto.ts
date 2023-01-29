@@ -14,4 +14,5 @@ export interface BookingDto {
 	from_date: string;
 	to_date: string;
 	type: number;
+	comment: string;
 }
