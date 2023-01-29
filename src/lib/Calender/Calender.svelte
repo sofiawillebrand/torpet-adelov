@@ -255,7 +255,6 @@
 </script>
 
 <!-- TODO: Display other bookings on page if dates overlap with other -->
-<!-- TODO: Possibility to add comment to booking -->
 
 {#if showModal}
 	<CalenderForm bind:showModal />

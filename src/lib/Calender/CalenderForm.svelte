@@ -4,13 +4,10 @@
 	import Modal from '$lib/Modal.svelte';
 	import { bookingStore } from '../../booking-store';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 
 	export let showModal = false;
 	let loading = false;
 	let session: AuthSession;
-
-	let title = 'Boka din vistelse: ' + $bookingStore.startdate;
 
 	if ($page.data.session) {
 		session = $page.data.session;
@@ -25,7 +22,8 @@
 				user_id: user.id,
 				from_date: $bookingStore.startdate,
 				to_date: $bookingStore.enddate,
-				type: $bookingStore.type
+				type: $bookingStore.type,
+				comment: $bookingStore.comment
 			};
 
 			const { error } = await supabaseClient.from('bokningar').insert(booking);
@@ -74,7 +72,7 @@
 				Föredrar du att vara själv på torpet under denna bokning:
 			</p>
 			<input id="allow-other" type="radio" name="allow" value={0} bind:group={$bookingStore.type} />
-			<label class=" text-gray-700 text-sm mb-2" for="allow-other"> Ja </label>
+			<label class=" text-gray-700 text-sm mb-2" for="allow-other"> Nej </label>
 			<input
 				id="dont-allow-other"
 				type="radio"
@@ -82,7 +80,7 @@
 				value={1}
 				bind:group={$bookingStore.type}
 			/>
-			<label class=" text-gray-700 text-sm mb-2" for="dont-allow-other"> Nej </label>
+			<label class=" text-gray-700 text-sm mb-2" for="dont-allow-other"> Ja </label>
 		</div>
 		<div class="mb-6">
 			<label class="block text-gray-700 text-sm font-bold mb-2" for="comment"> Kommentar </label>
