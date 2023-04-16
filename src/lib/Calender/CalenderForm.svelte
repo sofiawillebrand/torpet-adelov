@@ -6,21 +6,47 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+	interface OverlappingBookings {
+		from_date: string;
+		to_date: string;
+		comment: string;
+		profiles: {
+			username: string;
+			email: string;
+		};
+	}
+
 	export let showModal = false;
 	let loading = false;
 	let session: AuthSession;
+	let overlappingBookings: OverlappingBookings[];
 
 	if ($page.data.session) {
 		session = $page.data.session;
 	}
 
 	const fetchBookingsOnDate = async () => {
-		const { data, error, status } = await supabaseClient
-			.from('bokningar')
-			.select('*')
-			.or(
-				`and(to_date.gte.${$bookingStore.enddate}, from_date.lte.${$bookingStore.enddate}), and(from_date.lte.${$bookingStore.startdate}, to_date.gte.${$bookingStore.startdate}), and(from_date.gte.${$bookingStore.startdate}, to_date.lte.${$bookingStore.enddate})`
-			);
+		try {
+			loading = true;
+
+			const { data, error, status } = await supabaseClient
+				.from('bokningar')
+				.select('from_date,to_date,comment, profiles (username, email)')
+				.or(
+					`and(to_date.gte.${$bookingStore.enddate}, from_date.lte.${$bookingStore.enddate}), and(from_date.lte.${$bookingStore.startdate}, to_date.gte.${$bookingStore.startdate}), and(from_date.gte.${$bookingStore.startdate}, to_date.lte.${$bookingStore.enddate})`
+				);
+
+			if (data) {
+				overlappingBookings = data as OverlappingBookings[];
+			}
+			if (error) throw error;
+		} catch (error) {
+			if (error instanceof Error) {
+				alert(error.message);
+			}
+		} finally {
+			loading = false;
+		}
 	};
 
 	const bookVisit = async () => {
@@ -59,6 +85,15 @@
 	on:close={() => (showModal = false)}
 >
 	<form slot="content" class="bg-white">
+		{#if overlappingBookings?.length > 0}
+			<p class=" text-red-700 text-md  mb-2">
+				Din planerade bokning överlappar med {overlappingBookings?.length} bokningar
+			</p>
+			{#each overlappingBookings as booking, i}
+				<p class=" text-gray-700 text-sm  mb-4">
+					{booking.profiles.username} har bokat från {booking.from_date} till {booking.to_date}
+				</p>{/each}
+		{/if}
 		<p class=" text-gray-700 text-sm  mb-4">
 			Observera att ditt namn och eventuell kommentar kommer att synas för andra som har tillgång
 			till kalendern.
