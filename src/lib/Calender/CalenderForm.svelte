@@ -4,6 +4,7 @@
 	import Modal from '$lib/Modal.svelte';
 	import { bookingStore } from '../../booking-store';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	export let showModal = false;
 	let loading = false;
@@ -12,6 +13,15 @@
 	if ($page.data.session) {
 		session = $page.data.session;
 	}
+
+	const fetchBookingsOnDate = async () => {
+		const { data, error, status } = await supabaseClient
+			.from('bokningar')
+			.select('*')
+			.or(
+				`and(to_date.gte.${$bookingStore.enddate}, from_date.lte.${$bookingStore.enddate}), and(from_date.lte.${$bookingStore.startdate}, to_date.gte.${$bookingStore.startdate}), and(from_date.gte.${$bookingStore.startdate}, to_date.lte.${$bookingStore.enddate})`
+			);
+	};
 
 	const bookVisit = async () => {
 		try {
@@ -38,6 +48,10 @@
 			loading = false;
 		}
 	};
+
+	onMount(() => {
+		fetchBookingsOnDate();
+	});
 </script>
 
 <Modal
