@@ -125,6 +125,7 @@
 				beforeFirstIndex: i < firstDayIndex,
 				afterLastIndex: i >= numberOfDays + firstDayIndex,
 				isBooked: false,
+				nrOfBookings: 0,
 				privateBooking: false
 			}));
 
@@ -232,6 +233,7 @@
 						const index = displayedDays.findIndex((dd) => dd.id === element - 1);
 						if (index != null) {
 							displayedDays[index].isBooked = true;
+							displayedDays[index].nrOfBookings = displayedDays[index].nrOfBookings + 1;
 							displayedDays[index].privateBooking = b.type === 1;
 						}
 					});
@@ -303,30 +305,45 @@
 					<button
 						class:bg-teal-300={day.isBooked && !day.privateBooking}
 						class:bg-fuchsia-300={day.isBooked && day.privateBooking}
-						class="text-center text-sm p-1 border-gray-500 border text-gray-500 "
+						class="text-center text-sm p-1 border-gray-500 border text-gray-500 relative"
 						on:click={() => openDate(day)}
 					>
 						{i - firstDayIndex + numberOfDaysPreviousMonth + 1}
+						{#if day.nrOfBookings > 0}
+							<span class="absolute bottom-0 right-1 text-xs font-semibold">
+								{day.nrOfBookings}</span
+							>
+						{/if}
 					</button>
 				{:else if day.afterLastIndex}
 					<button
 						class:bg-teal-300={day.isBooked && !day.privateBooking}
 						class:bg-fuchsia-300={day.isBooked && day.privateBooking}
-						class="text-center text-sm p-1 border-gray-500 border text-gray-500"
+						class="text-center text-sm p-1 border-gray-500 border text-gray-500 relative"
 						on:click={() => openDate(day)}
 					>
 						{i - firstDayIndex - numberOfDays + 1}
+						{#if day.nrOfBookings > 0}
+							<span class="absolute bottom-0 right-1 text-xs font-semibold">
+								{day.nrOfBookings}</span
+							>
+						{/if}
 					</button>
 				{:else}
 					<button
 						class:font-extrabold={day.currentDay && monthIndex === today.month}
 						class:bg-teal-300={day.isBooked && !day.privateBooking}
 						class:bg-fuchsia-300={day.isBooked && day.privateBooking}
-						class="text-center text-md p-1 border-sky-900 border"
+						class="text-center text-md p-1 border-sky-900 border relative"
 						data-dateID={`${month}_${i - firstDayIndex + 1}_${year}`}
 						on:click={() => openDate(day)}
 					>
 						{i - firstDayIndex + 1}
+						{#if day.nrOfBookings > 0}
+							<span class="absolute bottom-0 right-1 text-xs font-semibold">
+								{day.nrOfBookings}</span
+							>
+						{/if}
 					</button>
 				{/if}
 			{/each}
