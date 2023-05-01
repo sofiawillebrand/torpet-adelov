@@ -4,6 +4,7 @@ export interface ContentOfDate {
 	beforeFirstIndex: boolean;
 	afterLastIndex: boolean;
 	isBooked: boolean;
+	nrOfBookings: number;
 	privateBooking: boolean;
 }
 

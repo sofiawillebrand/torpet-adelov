@@ -26,7 +26,7 @@
 >
 	<div class="relative w-full h-full max-w-2xl md:h-auto m-auto">
 		<!-- Modal content -->
-		<div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+		<div class="relative bg-white rounded-lg shadow dark:bg-gray-700 max-h-90 overflow-auto">
 			<!-- Modal header -->
 			<div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
 				<h3 class="text-xl font-semibold text-gray-900 dark:text-white">{title}</h3>
