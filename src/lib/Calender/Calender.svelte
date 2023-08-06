@@ -175,9 +175,15 @@
 							0
 						).getDate();
 
+						const lastDayOfCurrentMonth = new Date(
+							endDate.getFullYear(),
+							endDate.getMonth(),
+							0
+						).getDate();
+
 						if (lastDayOfNextMonth - startDay !== lengthOfBooking) {
 							isOvelappingNextMonth = true;
-							daysInNextMonth = lastDayOfNextMonth - startDay;
+							daysInNextMonth = lengthOfBooking - (lastDayOfCurrentMonth - startDay);
 						}
 					}
 
@@ -231,7 +237,7 @@
 
 					daysBooked.forEach((element) => {
 						const index = displayedDays.findIndex((dd) => dd.id === element - 1);
-						if (index != null) {
+						if (index != null && displayedDays[index] != null) {
 							displayedDays[index].isBooked = true;
 							displayedDays[index].nrOfBookings = displayedDays[index].nrOfBookings + 1;
 							displayedDays[index].privateBooking = b.type === 1;
@@ -243,7 +249,7 @@
 			if (error && status !== 406) throw error;
 		} catch (error) {
 			if (error instanceof Error) {
-				alert(error.message);
+				alert(error);
 			}
 		} finally {
 			loading = false;
