@@ -32,6 +32,13 @@
 					Mina bokningar
 				</a>
 				<a
+					href="/torstens-levnadsbeskrivning"
+					class="mt-4 inline-block lg:mt-0  hover:text-white
+			{onRoute === '/torstens-levnadsbeskrivning' ? 'font-bold text-white' : 'text-teal-200'}"
+				>
+					Torstens Levnadsbeskrivning
+				</a>
+				<a
 					href="/mina-uppgifter"
 					class="mt-4 inline-block lg:mt-0  hover:text-white
 				{onRoute === '/mina-uppgifter' ? 'font-bold text-white' : 'text-teal-200'}"
