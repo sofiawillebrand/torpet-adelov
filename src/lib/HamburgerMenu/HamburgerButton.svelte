@@ -1,11 +1,11 @@
 <script lang="ts">
-	let isOpen = true;
+	export let isOpen = true;
 	const handleButtonClick = () => {
 		isOpen = !isOpen;
 	};
 </script>
 
-<button class="space-y-2" on:click={handleButtonClick}>
+<button class="space-y-2 z-20" on:click={handleButtonClick}>
 	<div
 		class:rotate-45={isOpen}
 		class:translate-y-2={isOpen}
